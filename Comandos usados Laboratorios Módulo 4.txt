@@ -1,4 +1,4 @@
-COMANDOS USADOS PRACTICA 1: Instalar un servidor HTTP
+COMANDOS USADOS PRACTICA 1: INSTALAR UN SERVIDOR HTTP
 sudo su
 dnf install httpd
 systemctl enable --now httpd
@@ -9,90 +9,104 @@ cd /var/www/html/hola
 nano index.html
 # [CONTENIDO DE: index.html]
 # ----------------------------------------------------
-# <h1>Hola Mundo</h1>
+<!DOCTYPE html>
+<html>
+<head><tittle>HOLA MUNDO</tittle><head>
+<body>
+<h1>HOLA MUNDO<h1>
+</body>
+<!html>
 # ----------------------------------------------------
 nano /etc/httpd/conf.d/hola.conf
 # [CONTENIDO DE: hola.conf]
 # ----------------------------------------------------
-# <VirtualHost *:80>
-#     ServerName hola.local
-#     DocumentRoot /var/www/html/hola
-#     <Directory /var/www/html/hola>
-#         AllowOverride All
-#         Require all granted
-#     </Directory>
-# 
-#     ErrorLog /var/log/httpd/hola_error.log
-#     CustomLog /var/log/httpd/hola_access.log combined
-# </VirtualHost>
+  <VirtualHost *:80>
+      ServerName hola.local
+      DocumentRoot /var/www/html/hola
+      <Directory /var/www/html/hola>
+          AllowOverride All
+          Require all granted
+      </Directory>
+ 
+      ErrorLog /var/log/httpd/hola_error.log
+      CustomLog /var/log/httpd/hola_access.log combined
+  </VirtualHost>
 # ----------------------------------------------------
 nano /etc/hosts
-# (Se agrega la resoluciÛn local al final: 127.0.0.1 hola.local)
+# (Se agrega la resoluci√≥n local al final: 127.0.0.1 hola.local)
 systemctl restart httpd
-# (ComprobaciÛn en Firefox con la IP de la VM)
+# (Comprobaci√≥n en Firefox con la IP de la VM)
+
 # --- PARTE 2: SITIO ESTUDIANTE ---
 mkdir -p /var/www/html/estudiante
 nano /var/www/html/estudiante/index.html
 # [CONTENIDO DE: index.html]
 # ----------------------------------------------------
-# <h1>Angel Valenzuela</h1>
-# <h2>Matricula: 2025-1447</h2>
-# <h2>Materia: Sistemas Operativos Linux</h2>
+ <!DOCTYPE html>
+ <html>
+ <head><tittle>PERFIL ESTUDIANTE<tittle><head/>
+ <body>
+ <h1>Angel Valenzuela</h1>
+ <h2>Matricula: 2025-1447</h2>
+ <h2>Materia: Sistemas Operativos 3</h2>
+ </body>
+ </html>
 # ----------------------------------------------------
 nano /etc/httpd/conf.d/estudiante.conf
 # [CONTENIDO DE: estudiante.conf]
 # ----------------------------------------------------
-# Listen 8080
-# 
-# <VirtualHost *:8080>
-#     ServerName estudiante.local
-#     DocumentRoot /var/www/html/estudiante
-#     <Directory /var/www/html/estudiante>
-#         AllowOverride All
-#         Require all granted
-#     </Directory>
-# 
-#     ErrorLog /var/log/httpd/hola_error.log
-#     CustomLog /var/log/httpd/hola_access.log combined
-# </VirtualHost>
+ Listen 8080
+ 
+ <VirtualHost *:8080>
+     ServerName estudiante.local
+     DocumentRoot /var/www/html/estudiante
+     <Directory /var/www/html/estudiante>
+         AllowOverride All
+         Require all granted
+     </Directory>
+ 
+     ErrorLog /var/log/httpd/hola_error.log
+     CustomLog /var/log/httpd/hola_access.log combined
+ </VirtualHost>
 # ----------------------------------------------------
 nano /etc/hosts
-# (Se agrega la resoluciÛn local al final: 127.0.0.1 estudiante.local)
+# (Se agrega la resoluci√≥n local al final: 127.0.0.1 estudiante.local)
 systemctl restart httpd
-# (ComprobaciÛn en navegador con la IP de la VM + :8080)
+# (Comprobaci√≥n en navegador con la IP de la VM + :8080)
 
 
 
-COMANDOS USADOS PRACTICA 2: Instalar un servidor de correos
+COMANDOS USADOS PRACTICA 2: INSTALAR UN SERVIDOR DE CORREOS
 sudo su
 dnf install postfix* mailx cyrus-sasl cyrus-sasl-plain -y
 systemctl enable --now postfix
 systemctl status postfix
-# --- CONFIGURACI”N PRINCIPAL DE POSTFIX ---
+# --- CONFIGURACI√ìN PRINCIPAL DE POSTFIX ---
 nano /etc/postfix/main.cf
-# (Buscar en el archivo y modificar/descomentar quitando el '#' a las siguientes lÌneas:)
+# (Buscar en el archivo y modificar/descomentar quitando el '#' a las siguientes l√≠neas:)
 # myhostname = Angel.centos.com
-# mydomain = centos.com
-# myorigin = $mydomain
+# mydomain = centos.com (agregar)
+# myorigin = $mydomain (tal vez no aparezca)
 # inet_interfaces = all
 # inet_protocols = ipv4
 # mynetworks = [COLOCAR_IP_DE_LA_VM_AQUI]/24, 127.0.0.0/8
 # home_mailbox = Maildir/
-# (Bajar hasta el final del archivo main.cf y pegar la configuraciÛn de retransmisiÛn:)
+# (Bajar hasta el final del archivo main.cf y pegar la configuraci√≥n de retransmisi√≥n:)
 # ----------------------------------------------------
-# relayhost = [smtp.gmail.com]:587
-# smtp_use_tls = yes
-# smtp_sasl_auth_enable = yes
-# smtp_sasl_security_options = noanonymous
-# smtp_tls_security_level = encrypt
-# smtp_sasl_password_maps = lmdb:/etc/postfix/sasl_passwd
-# smtp_tls_session_cache_database = lmdb:${data_directory}/smtp_scache
+ relayhost = [smtp.gmail.com]:587
+ smtp_use_tls = yes
+ smtp_sasl_auth_enable = yes
+ smtp_sasl_security_options = noanonymous
+ smtp_tls_security_level = encrypt
+ smtp_sasl_password_maps = lmdb:/etc/postfix/sasl_passwd
+ smtp_tls_session_cache_database = lmdb:${data_directory}/smtp_scache
 # ----------------------------------------------------
-# --- AUTENTICACI”N (CONTRASE—A DE APLICACI”N GMAIL) ---
+# --- AUTENTICACI√ìN (CONTRASE√ëA DE APLICACI√ìN GMAIL) ---
 nano /etc/postfix/sasl_passwd
 # [CONTENIDO DE: sasl_passwd]
 # ----------------------------------------------------
-# [smtp.gmail.com]:587 angelgvr2122@gmail.com:haxw jnok slmo comg
+# [smtp.gmail.com]:587 angelgvr2122@gmail.com:(contrase√±a de aplicacion)
+(Generar la contrase√±a de aplicacion en el navegador)
 # ----------------------------------------------------
 # (Hashear el archivo para crear la base de datos que Postfix puede leer)
 postmap /etc/postfix/sasl_passwd
@@ -105,24 +119,25 @@ chown root:root /etc/postfix/sasl_passwd /etc/postfix/sasl_passwd.lmdb
 systemctl restart postfix
 systemctl enable --now postfix
 systemctl status postfix
-# (Crear la estructura del buzÛn local usando expansiÛn de llaves en bash)
+
+# (Crear la estructura del buz√≥n local usando expansi√≥n de llaves en bash)
 mkdir -p ~/Maildir/{cur,new,tmp}
-# --- PRUEBA DE ENVÕO DE CORREOS ---
+# --- PRUEBA DE ENV√çO DE CORREOS ---
 # 1. Prueba personal (Para confirmar que sale de la VM)
-echo "Angel Gabriel Valenzuela RamÌrez - MatrÌcula: 2025-1447" | mailx -s "MambruSeFueALaGuerra" angelgvalenzuela7@gmail.com
+echo "Angel Gabriel Valenzuela Ram√≠rez - Matr√≠cula: 2025-1447" | mailx -s "MambruSeFueALaGuerra" angelgvalenzuela7@gmail.com
 
-# 2. Prueba de la R˙brica (Para que el profesor corrija la pr·ctica)
-echo "Angel Gabriel Valenzuela RamÌrez - MatrÌcula: 2025-1447" | mailx -s "MambruSeFueALaGuerra" os3conadrian@gmail.com
+# 2. Prueba de la R√∫brica (Para que el profesor corrija la pr√°ctica)
+echo "Angel Gabriel Valenzuela Ram√≠rez - Matr√≠cula: 2025-1447" | mailx -s "MambruSeFueALaGuerra" os3conadrian@gmail.com
 
 
 
-COMANDOS USADOS PRACTICA 3: Instalar un servidor de ImpresiÛn
+COMANDOS USADOS PRACTICA 3: INSTALAR UN SERVIDOR DE IMPRESION
 sudo su
-# --- INSTALACI”N DE CUPS ---
+# --- INSTALACI√ìN DE CUPS ---
 dnf install cups -y
 systemctl enable --now cups
 systemctl status cups
-# --- CONFIGURACI”N DE ACCESO Y RED ---
+# --- CONFIGURACI√ìN DE ACCESO Y RED ---
 nano /etc/cups/cupsd.conf
 # [MODIFICACIONES EN: cupsd.conf]
 # ----------------------------------------------------
@@ -139,16 +154,34 @@ nano /etc/cups/cupsd.conf
 #    </Location>
 # ----------------------------------------------------
 # --- ABRIR PUERTO EN EL FIREWALL ---
-firewall-cmd --add-port=631/tcp ñpermanent
+firewall-cmd --add-port=631/tcp ‚Äìpermanent
 firewall-cmd --reload
-# --- INSTALACI”N DE LA IMPRESORA VIRTUAL PDF ---
+# --- INSTALACI√ìN DE LA IMPRESORA VIRTUAL PDF ---
 dnf install epel-release -y
 dnf install cups-pdf -y
 # --- APLICAR CAMBIOS ---
 systemctl restart cups
 # (En este punto, ir al navegador de la PC real con Windows, colocar IP_DE_LA_VM:631,
-# agregar la impresora virtual (CUPS-PDF) e imprimir una p·gina de prueba o documento Word).
-# --- VERIFICACI”N DE LA PRUEBA IMPRESA ---
+# agregar la impresora virtual (CUPS-PDF) e imprimir una p√°gina de prueba o documento Word).
+#Configuraciones en el navegador:"
+#Administraci√≥n.
+#Add printer. Cupspdf.
+#Agregar nombre. Marcar share this printer.
+#Marcar Generic. Luego, Marcar primera opci√≥n y a√±adir impresora.
+#Comprobar en "Printers".
+
+#En la PC cliente, instalar la impresora#
+#Copiar link de la impresora.
+#Ir a impresora en la Maquina real. Agregar manualmente.
+#Seleccionar impresora compartida por nombre. Pegar link de la impresora.
+#Generic. Generic/text only.
+#Imprimir pagina de prueba.
+#Comprobar graficamente en "Trabajos completados".
+
+#Imprimir pagina de word#
+Ir a word. Seleccionar impresora virtual e imprimir.
+
+# --- VERIFICACI√ìN DE LA PRUEBA IMPRESA ---
 ls -lh /var/spool/cups-pdf/ANONYMOUS
-# (Debe aparecer el archivo .pdf generado, demostrando que funcionÛ correctamente).
+# (Debe aparecer el archivo .pdf generado, demostrando que funcion√≥ correctamente).
 
